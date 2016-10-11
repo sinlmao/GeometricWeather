@@ -410,7 +410,7 @@ public class Weather {
                         result.heWeather.get(p).daily_forecast.get(i).cond.txt_n};
                 daily.temps = new int[] {
                         Integer.parseInt(result.heWeather.get(p).daily_forecast.get(i).tmp.max),
-                        Integer.parseInt(result.heWeather.get(p).daily_forecast.get(i).tmp.max)};
+                        Integer.parseInt(result.heWeather.get(p).daily_forecast.get(i).tmp.min)};
                 daily.windDirs = new String[] {
                         result.heWeather.get(p).daily_forecast.get(i).wind.dir,
                         result.heWeather.get(p).daily_forecast.get(i).wind.dir};
