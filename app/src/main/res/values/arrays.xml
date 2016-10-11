@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- forecast type. -->
+    <string-array name="forecast_types">
+        <item>简单预报风格</item>
+        <item>天气通知风格</item>
+    </string-array>
+    <string-array name="forecast_type_values">
+        <item>simple_forecast</item>
+        <item>notification</item>
+    </string-array>
+
+    <!-- widget refresh time. -->
+    <string-array name="refresh_times">
+        <item>1小时</item>
+        <item>2小时</item>
+        <item>3小时</item>
+        <item>4小时</item>
+    </string-array>
+    <string-array name="refresh_time_values">
+        <item>1hour</item>
+        <item>2hours</item>
+        <item>3hours</item>
+        <item>4hours</item>
+    </string-array>
+
+    <!-- notification text color. -->
+    <string-array name="notification_text_colors">
+        <item>深色</item>
+        <item>灰色</item>
+        <item>亮色</item>
+    </string-array>
+    <string-array name="notification_text_color_values">
+        <item>dark</item>
+        <item>grey</item>
+        <item>light</item>
+    </string-array>
+
+</resources>

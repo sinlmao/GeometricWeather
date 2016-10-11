@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_header"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_header_height"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <ImageView
+        android:id="@+id/container_nav_header_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/nav_head_day"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/container_nav_header_text"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/normal_margin"
+        android:text="@string/geometric_weather"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:ignore="RtlHardcoded" />
+
+    <ImageView
+        android:id="@+id/container_nav_header_icon"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@id/container_nav_header_text"
+        android:layout_width="@dimen/flag_icon_size"
+        android:layout_height="@dimen/flag_icon_size"
+        android:layout_marginLeft="@dimen/normal_margin"
+        tools:src="@drawable/ic_launcher"
+        tools:ignore="ContentDescription,RtlHardcoded" />
+
+</RelativeLayout>

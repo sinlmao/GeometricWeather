@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="wangdaye.com.geometricweather" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:name=".GeometricWeather"
+        android:supportsRtl="true"
+        android:largeHeap="true"
+        android:theme="@style/GeometricWeatherTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
+        <!-- Baidu location service -->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="8Ag8g9warGQeUVFbqx4LRrXU" />
+        <service android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+
+        <!-- activity -->
+        <activity
+            android:name=".view.activity.MainActivity"
+            android:label="@string/geometric_weather"
+            android:theme="@style/GeometricWeatherTheme"
+            android:configChanges="orientation|screenSize"
+            tools:ignore="InnerclassSeparator">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.activity.SettingsActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/GeometricWeatherTheme"
+            android:configChanges="orientation|screenSize"
+            tools:ignore="InnerclassSeparator" />
+
+        <activity
+            android:name=".view.activity.AboutActivity"
+            android:label="@string/action_about"
+            android:theme="@style/GeometricWeatherTheme"
+            android:configChanges="orientation|screenSize"
+            tools:ignore="InnerclassSeparator" />
+
+        <!-- create widget activity -->
+        <activity
+            android:name=".view.activity.widget.CreateWidgetDayActivity"
+            android:theme="@style/GeometricWeatherTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator">
+
+            <intent-filter>
+                <action android:name="andorid.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.activity.widget.CreateWidgetWeekActivity"
+            android:theme="@style/GeometricWeatherTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator">
+
+            <intent-filter>
+                <action android:name="andorid.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.activity.widget.CreateWidgetDayWeekActivity"
+            android:theme="@style/GeometricWeatherTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator">
+            <intent-filter>
+                <action android:name="andorid.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.activity.widget.CreateWidgetClockDayActivity"
+            android:theme="@style/GeometricWeatherTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator">
+            <intent-filter>
+                <action android:name="andorid.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.activity.widget.CreateWidgetClockDayCenterActivity"
+            android:theme="@style/GeometricWeatherTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator">
+            <intent-filter>
+                <action android:name="andorid.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.activity.widget.CreateWidgetClockDayWeekActivity"
+            android:theme="@style/GeometricWeatherTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator">
+            <intent-filter>
+                <action android:name="andorid.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+
+        </activity>
+
+        <!-- notification service -->
+        <service android:name=".service.notification.NotificationService"
+            tools:ignore="InnerclassSeparator" />
+
+        <!-- widget service -->
+        <service android:name=".service.widget.WidgetDayService"
+            tools:ignore="InnerclassSeparator" />
+        <service android:name=".service.widget.WidgetWeekService"
+            tools:ignore="InnerclassSeparator" />
+        <service android:name=".service.widget.WidgetDayWeekService"
+            tools:ignore="InnerclassSeparator" />
+        <service android:name=".service.widget.WidgetClockDayService"
+            tools:ignore="InnerclassSeparator" />
+        <service android:name=".service.widget.WidgetClockDayCenterService"
+            tools:ignore="InnerclassSeparator" />
+        <service android:name=".service.widget.WidgetClockDayWeekService"
+            tools:ignore="InnerclassSeparator" />
+
+        <service android:name=".service.notification.TimeService"
+            tools:ignore="InnerclassSeparator" />
+        <service android:name=".service.notification.TodayForecastService"
+            tools:ignore="InnerclassSeparator" />
+        <service android:name=".service.notification.TomorrowForecastService"
+            tools:ignore="InnerclassSeparator" />
+
+        <!-- receiver -->
+
+        <receiver
+            android:name=".receiver.MyReceiver"
+            tools:ignore="InnerclassSeparator">
+
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+
+        </receiver>
+
+        <!-- widget -->
+        <receiver
+            android:name=".receiver.widget.WidgetDayProvider"
+            android:label="@string/widget_day"
+            tools:ignore="InnerclassSeparator">
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_day" />
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+        </receiver>
+
+        <receiver
+            android:name=".receiver.widget.WidgetWeekProvider"
+            android:label="@string/widget_week"
+            tools:ignore="InnerclassSeparator">
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_week" />
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+        </receiver>
+
+        <receiver
+            android:name=".receiver.widget.WidgetDayWeekProvider"
+            android:label="@string/widget_day_week"
+            tools:ignore="InnerclassSeparator">
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_day_week" />
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+        </receiver>
+
+        <receiver
+            android:name=".receiver.widget.WidgetClockDayProvider"
+            android:label="@string/widget_clock_day"
+            tools:ignore="InnerclassSeparator">
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_clock_day" />
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+        </receiver>
+
+        <receiver
+            android:name=".receiver.widget.WidgetClockDayCenterProvider"
+            android:label="@string/widget_clock_day_center"
+            tools:ignore="InnerclassSeparator">
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_clock_day_center" />
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+        </receiver>
+
+        <receiver
+            android:name=".receiver.widget.WidgetClockDayWeekProvider"
+            android:label="@string/widget_clock_day_week"
+            tools:ignore="InnerclassSeparator">
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_clock_day_week" />
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+        </receiver>
+
+    </application>
+
+    <!-- 这个权限用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+        tools:ignore="ManifestOrder" />
+    <!-- 这个权限用于访问GPS定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- 用于读取手机当前的状态-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 访问网络，网络定位需要上网-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- SD卡读取权限，用户写入离线定位数据-->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <!-- 开机自启 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 访问时钟 -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+</manifest>

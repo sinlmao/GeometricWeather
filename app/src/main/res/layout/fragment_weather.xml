@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_weather"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorRoot"
+    tools:context=".view.activity.MainActivity">
+
+    <wangdaye.com.geometricweather.view.widget.weatherView.SkyView
+        android:id="@+id/fragment_weather_skyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <wangdaye.com.geometricweather.view.widget.SwipeSwitchLayout
+        android:id="@+id/fragment_weather_swipeSwitchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <wangdaye.com.geometricweather.view.widget.swipeRefreshLayout.SwipeRefreshLayout
+            android:id="@+id/fragment_weather_swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/fragment_weather_scrollView"
+                android:scrollbars="none"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include layout="@layout/container_weather" />
+
+            </android.support.v4.widget.NestedScrollView>
+
+        </wangdaye.com.geometricweather.view.widget.swipeRefreshLayout.SwipeRefreshLayout>
+
+    </wangdaye.com.geometricweather.view.widget.SwipeSwitchLayout>
+
+</android.support.design.widget.CoordinatorLayout>

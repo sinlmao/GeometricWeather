@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/share_view_height">
+
+    <ImageView
+        android:id="@+id/container_share_view_background"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:src="@drawable/nav_head_night"
+        tools:ignore="ContentDescription" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/container_share_view_weatherContainer"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/container_share_view_flagIcon"
+                android:layout_width="@dimen/flag_icon_size"
+                android:layout_height="@dimen/flag_icon_size"
+                android:layout_margin="@dimen/normal_margin"
+                tools:src="@drawable/weather_sun_night"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/container_share_view_location"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="24dp"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:textColor="@color/colorTextLight"
+                android:textSize="@dimen/title_text_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="青岛"
+                tools:ignore="RelativeOverlap,RtlHardcoded" />
+
+            <TextView
+                android:id="@+id/container_share_view_weather"
+                android:layout_below="@id/container_share_view_location"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginBottom="@dimen/normal_margin"
+                android:textColor="@color/colorTextLight"
+                android:textSize="@dimen/title_text_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="晴 6℃"
+                tools:ignore="RelativeOverlap,RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/container_share_view_fromContainer"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/container_share_view_fromInfo"
+                android:text="@string/feedback_share_info"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/little_margin"
+                android:textSize="@dimen/widget_time_text_size"
+                android:textColor="@color/colorTextGrey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/container_share_view_lifeInfoContainer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/container_share_view_weatherContainer"
+            android:layout_marginBottom="@dimen/normal_margin"
+            tools:ignore="DisableBaselineAlignment">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/container_share_view_temp"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/content_text_size"
+                    android:maxLines="1"
+                    style="@style/large_title_text"
+                    tools:text="气温：3/10°" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/container_share_view_wind"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/content_text_size"
+                    android:maxLines="1"
+                    style="@style/large_title_text"
+                    tools:text="东北风3-4级"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/container_share_view_aqi"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/content_text_size"
+                    android:maxLines="1"
+                    style="@style/large_title_text"
+                    tools:text="颗粒物等级：良"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_below="@id/container_share_view_lifeInfoContainer"
+            android:layout_above="@id/container_share_view_fromContainer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="DisableBaselineAlignment">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/container_share_view_week_1"
+                    android:textSize="@dimen/content_text_size"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    style="@style/large_title_text"
+                    tools:text="周二" />
+
+                <ImageView
+                    android:id="@+id/container_share_view_icon_1"
+                    android:layout_below="@id/container_share_view_week_1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="@dimen/share_week_icon_size"
+                    android:layout_height="@dimen/share_week_icon_size"
+                    tools:src="@drawable/weather_cloudy"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/container_share_view_temp_1"
+                    android:textSize="@dimen/content_text_size"
+                    android:layout_below="@id/container_share_view_icon_1"
+                    android:layout_centerHorizontal="true"
+                    style="@style/large_title_text"
+                    tools:text="1/7°" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/container_share_view_week_2"
+                    android:textSize="@dimen/content_text_size"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    style="@style/large_title_text"
+                    tools:text="周二" />
+
+                <ImageView
+                    android:id="@+id/container_share_view_icon_2"
+                    android:layout_below="@id/container_share_view_week_2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="@dimen/share_week_icon_size"
+                    android:layout_height="@dimen/share_week_icon_size"
+                    tools:src="@drawable/weather_cloudy"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/container_share_view_temp_2"
+                    android:textSize="@dimen/content_text_size"
+                    android:layout_below="@id/container_share_view_icon_2"
+                    android:layout_centerHorizontal="true"
+                    style="@style/large_title_text"
+                    tools:text="1/7°" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/container_share_view_week_3"
+                    android:textSize="@dimen/content_text_size"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    style="@style/large_title_text"
+                    tools:text="周二" />
+
+                <ImageView
+                    android:id="@+id/container_share_view_icon_3"
+                    android:layout_below="@id/container_share_view_week_3"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="@dimen/share_week_icon_size"
+                    android:layout_height="@dimen/share_week_icon_size"
+                    tools:src="@drawable/weather_cloudy"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/container_share_view_temp_3"
+                    android:textSize="@dimen/content_text_size"
+                    android:layout_below="@id/container_share_view_icon_3"
+                    android:layout_centerHorizontal="true"
+                    style="@style/large_title_text"
+                    tools:text="1/7°" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>
