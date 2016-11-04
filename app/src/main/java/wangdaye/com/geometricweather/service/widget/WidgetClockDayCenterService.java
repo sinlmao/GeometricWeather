@@ -67,7 +67,7 @@ public class WidgetClockDayCenterService extends RecursionService
 
     /** <br> widget. */
 
-    public static void refreshWidgetView(Context context, Weather weather) {
+    public static void refreshWidgetView(Context context, String locationName, Weather weather) {
         if (weather == null) {
             return;
         }
@@ -124,8 +124,9 @@ public class WidgetClockDayCenterService extends RecursionService
         PendingIntent pendingIntentClock = PendingIntent.getActivity(context, 0, intentClock, 0);
         views.setOnClickPendingIntent(R.id.widget_clock_day_center_clockButton, pendingIntentClock);
         // set weather intent.
-        Intent intentWeather = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntentWeather = PendingIntent.getActivity(context, 0, intentWeather, 0);
+        Intent intent = new Intent("com.wangdaye.geometricweather.Main")
+                .putExtra(MainActivity.KEY_CITY, locationName);
+        PendingIntent pendingIntentWeather = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.widget_clock_day_center_weatherButton, pendingIntentWeather);
 
         // commit.
@@ -137,12 +138,12 @@ public class WidgetClockDayCenterService extends RecursionService
 
     /** <br> interface. */
 
-    // request location.
+    // request name.
 
     @Override
     public void requestLocationSuccess(String locationName) {
-        weatherUtils.requestWeather(locationName, this);
-        getLocation().realLocation = locationName;
+        getLocation().realName = locationName;
+        weatherUtils.requestWeather(getLocation().name, getLocation().realName, this);
         DatabaseHelper.getInstance(this).insertLocation(getLocation());
     }
 
@@ -151,6 +152,7 @@ public class WidgetClockDayCenterService extends RecursionService
         LocationUtils.simpleLocationFailedFeedback(this);
         refreshWidgetView(
                 this,
+                getLocation().name,
                 DatabaseHelper.getInstance(this).searchWeather(getLocation()));
         this.stopSelf(getStartId());
     }
@@ -161,7 +163,7 @@ public class WidgetClockDayCenterService extends RecursionService
     public void requestJuheWeatherSuccess(JuheResult result, String locationName) {
         Weather weather = Weather.build(this, result);
 
-        refreshWidgetView(this, weather);
+        refreshWidgetView(this, getLocation().name, weather);
         getLocation().weather = weather;
         DatabaseHelper.getInstance(this).insertWeather(getLocation());
         DatabaseHelper.getInstance(this).insertHistory(weather);
@@ -172,7 +174,7 @@ public class WidgetClockDayCenterService extends RecursionService
     public void requestHefengWeatherSuccess(HefengResult result, String locationName) {
         Weather weather = Weather.build(this, result);
 
-        refreshWidgetView(this, weather);
+        refreshWidgetView(this, getLocation().name,  weather);
         getLocation().weather = weather;
         DatabaseHelper.getInstance(this).insertWeather(getLocation());
         DatabaseHelper.getInstance(this).insertHistory(weather);
@@ -184,6 +186,7 @@ public class WidgetClockDayCenterService extends RecursionService
         WidgetAndNotificationUtils.refreshWidgetFailed(this);
         refreshWidgetView(
                 this,
+                getLocation().name,
                 DatabaseHelper.getInstance(this).searchWeather(getLocation()));
         this.stopSelf(getStartId());
     }

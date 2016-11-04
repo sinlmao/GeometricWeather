@@ -80,10 +80,10 @@ public class CreateWidgetClockDayCenterActivity extends GeoActivity
             initData();
             initWidget();
 
-            if (location.location.equals(getString(R.string.local))) {
-                locationUtils.requestLocation(this);
+            if (location.name.equals(getString(R.string.local))) {
+                locationUtils.requestLocation(this, this);
             } else {
-                weatherUtils.requestWeather(location.location, this);
+                weatherUtils.requestWeather(location.name, location.name, this);
             }
         }
     }
@@ -161,7 +161,7 @@ public class CreateWidgetClockDayCenterActivity extends GeoActivity
         this.nameList = new ArrayList<>();
         List<Location> locationList = DatabaseHelper.getInstance(this).readLocation();
         for (Location l : locationList) {
-            nameList.add(l.location);
+            nameList.add(l.name);
         }
         this.location = new Location(nameList.get(0), null);
 
@@ -181,7 +181,7 @@ public class CreateWidgetClockDayCenterActivity extends GeoActivity
                         getString(R.string.sp_widget_clock_day_center_setting),
                         MODE_PRIVATE)
                         .edit();
-                editor.putString(getString(R.string.key_location), location.location);
+                editor.putString(getString(R.string.key_location), location.name);
                 editor.putBoolean(getString(R.string.key_show_card), showCardSwitch.isChecked());
                 editor.putBoolean(getString(R.string.key_hide_refresh_time), hideRefreshTimeSwitch.isChecked());
                 editor.putBoolean(getString(R.string.key_black_text), blackTextSwitch.isChecked());
@@ -266,12 +266,12 @@ public class CreateWidgetClockDayCenterActivity extends GeoActivity
         }
     }
 
-    // on request location listener.
+    // on request name listener.
 
     @Override
     public void requestLocationSuccess(String locationName) {
-        weatherUtils.requestWeather(locationName, this);
-        location.realLocation = locationName;
+        location.realName = locationName;
+        weatherUtils.requestWeather(location.name, location.realName, this);
         DatabaseHelper.getInstance(this).insertLocation(location);
     }
 

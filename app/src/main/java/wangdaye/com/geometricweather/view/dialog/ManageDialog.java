@@ -59,7 +59,7 @@ public class ManageDialog extends DialogFragment
         List<Location> locationList = DatabaseHelper.getInstance(getActivity()).readLocation();
         List<LocationItem> itemList = new ArrayList<>();
         for (Location l : locationList) {
-            itemList.add(new LocationItem(l.location));
+            itemList.add(new LocationItem(l.name));
         }
         this.adapter = new LocationAdapter(itemList);
         adapter.setOnItemClickListener(this);
@@ -83,7 +83,7 @@ public class ManageDialog extends DialogFragment
 
     /** <br> interface. */
 
-    // on select location listener.
+    // on select name listener.
 
     public interface OnLocationChangedListener {
         void selectLocation(String result);
@@ -94,7 +94,7 @@ public class ManageDialog extends DialogFragment
         this.listener = l;
     }
 
-    // on location item click.
+    // on name item click.
 
     @Override
     public void onItemClick(View view, int position) {

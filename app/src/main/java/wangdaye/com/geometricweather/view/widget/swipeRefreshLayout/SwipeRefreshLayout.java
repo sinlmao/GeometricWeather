@@ -188,7 +188,7 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
     /**
      * The refresh indicator starting and resting position is always positioned
      * near the top of the refreshing content. This position is a consistent
-     * location, but can be adjusted in either direction based on whether or not
+     * name, but can be adjusted in either direction based on whether or not
      * there is a toolbar or actionbar present.
      *
      * @param scale Set to true if there is no view at a higher z-order than
@@ -210,7 +210,7 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
 
     /**
      * The refresh indicator resting position is always positioned near the top
-     * of the refreshing content. This position is a consistent location, but
+     * of the refreshing content. This position is a consistent name, but
      * can be adjusted in either direction based on whether or not there is a
      * toolbar or actionbar present.
      *

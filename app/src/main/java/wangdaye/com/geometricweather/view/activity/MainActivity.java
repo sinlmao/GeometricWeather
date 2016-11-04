@@ -1,7 +1,6 @@
 package wangdaye.com.geometricweather.view.activity;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.design.widget.NavigationView;
@@ -21,6 +21,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +46,7 @@ import wangdaye.com.geometricweather.service.widget.WidgetClockDayWeekService;
 import wangdaye.com.geometricweather.service.widget.WidgetDayService;
 import wangdaye.com.geometricweather.service.widget.WidgetDayWeekService;
 import wangdaye.com.geometricweather.service.widget.WidgetWeekService;
+import wangdaye.com.geometricweather.utils.ShortcutsManager;
 import wangdaye.com.geometricweather.utils.SnackbarUtils;
 import wangdaye.com.geometricweather.view.dialog.ManageDialog;
 import wangdaye.com.geometricweather.view.fragment.WeatherFragment;
@@ -75,10 +77,9 @@ public class MainActivity extends GeoActivity
     // data
     private List<Location> locationList;
 
-    public static final int LOCATION_PERMISSIONS_REQUEST_CODE = 1;
-    public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 2;
-
+    public final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 1;
     private final int SETTINGS_ACTIVITY = 1;
+    public static final String KEY_CITY = "city";
 
     /** <br> life cycle. */
 
@@ -98,8 +99,23 @@ public class MainActivity extends GeoActivity
         }
         if (weatherFragment == null) {
             weatherFragment = new WeatherFragment();
-            weatherFragment.setLocation(locationList.get(0), true);
+            String locationName = getIntent().getStringExtra(KEY_CITY);
+            if (!TextUtils.isEmpty(locationName)) {
+                for (int i = 0; i < locationList.size(); i ++) {
+                    if (locationList.get(i).name.equals(locationName)) {
+                        weatherFragment.setLocation(locationList.get(i), true);
+                        break;
+                    }
+                }
+            }
+            if (weatherFragment.getLocation() == null) {
+                weatherFragment.setLocation(locationList.get(0), true);
+            }
             changeFragment(weatherFragment);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutsManager.checkAndPublishShortcuts(this, locationList);
         }
     }
 
@@ -223,7 +239,7 @@ public class MainActivity extends GeoActivity
 
     public void switchCity(String name, int swipeDir) {
         for (int i = 0; i < locationList.size(); i ++) {
-            if (locationList.get(i).location.equals(name)) {
+            if (locationList.get(i).name.equals(name)) {
                 int position = swipeDir == SwipeSwitchLayout.DIRECTION_LEFT ?
                         i + 1 : i - 1;
                 if (position < 0) {
@@ -243,6 +259,10 @@ public class MainActivity extends GeoActivity
     public void addLocation(Location location) {
         DatabaseHelper.getInstance(this).insertLocation(location);
         locationList.add(location);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutsManager.refreshShortcuts(this, locationList);
+        }
     }
 
     public boolean deleteLocation(Location location) {
@@ -252,10 +272,14 @@ public class MainActivity extends GeoActivity
         } else {
             DatabaseHelper.getInstance(this).deleteLocation(location);
             for (int i = 0; i < locationList.size(); i ++) {
-                if (locationList.get(i).location.equals(location.location)) {
+                if (locationList.get(i).name.equals(location.name)) {
                     locationList.remove(i);
                     break;
                 }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                ShortcutsManager.refreshShortcuts(this, locationList);
             }
             return true;
         }
@@ -263,7 +287,7 @@ public class MainActivity extends GeoActivity
 
     public void refreshLocation(Location location) {
         for (int i = 0; i < locationList.size(); i ++) {
-            if (locationList.get(i).location.equals(location.location)) {
+            if (locationList.get(i).name.equals(location.name)) {
                 locationList.remove(i);
                 locationList.add(i, location);
                 break;
@@ -273,32 +297,16 @@ public class MainActivity extends GeoActivity
 
     /** <br> permission. */
 
-    @TargetApi(Build.VERSION_CODES.M)
-    public void requestPermission(int permissionCode) {
-        switch (permissionCode) {
-            case LOCATION_PERMISSIONS_REQUEST_CODE:
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        android.Manifest.permission.INSTALL_LOCATION_PROVIDER) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(
-                            new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                            LOCATION_PERMISSIONS_REQUEST_CODE);
-                } else if (weatherFragment != null) {
-                    weatherFragment.getLocationUtils().requestLocation(weatherFragment);
-                }
-                break;
-
-            case WRITE_EXTERNAL_STORAGE_REQUEST_CODE:
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(
-                            new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
-                    break;
-                } else {
-                    ShareUtils.shareWeather(this, weatherFragment.location.weather);
-                }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestWritePermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                    new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+        } else {
+            ShareUtils.shareWeather(this, weatherFragment.location.weather);
         }
     }
 
@@ -306,14 +314,6 @@ public class MainActivity extends GeoActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permission, @NonNull int[] grantResult) {
         super.onRequestPermissionsResult(requestCode, permission, grantResult);
         switch (requestCode) {
-            case LOCATION_PERMISSIONS_REQUEST_CODE:
-                if (weatherFragment != null && grantResult[0] == PackageManager.PERMISSION_GRANTED) {
-                    weatherFragment.getLocationUtils().requestLocation(weatherFragment);
-                } else {
-                    SnackbarUtils.showSnackbar(getString(R.string.feedback_request_location_permission_failed));
-                }
-                break;
-
             case WRITE_EXTERNAL_STORAGE_REQUEST_CODE:
                 if (weatherFragment != null && grantResult[0] == PackageManager.PERMISSION_GRANTED) {
                     ShareUtils.shareWeather(this, weatherFragment.location.weather);
@@ -339,8 +339,11 @@ public class MainActivity extends GeoActivity
         locationName = sharedPreferences.getString(
                 getString(R.string.key_location),
                 getString(R.string.local));
-        if (weatherFragment.location.location.equals(locationName)) {
-            WidgetDayService.refreshWidgetView(this, weatherFragment.location.weather);
+        if (weatherFragment.location.name.equals(locationName)) {
+            WidgetDayService.refreshWidgetView(
+                    this,
+                    weatherFragment.getLocation().name,
+                    weatherFragment.location.weather);
         }
 
         // week
@@ -350,8 +353,11 @@ public class MainActivity extends GeoActivity
         locationName = sharedPreferences.getString(
                 getString(R.string.key_location),
                 getString(R.string.local));
-        if (weatherFragment.location.location.equals(locationName)) {
-            WidgetWeekService.refreshWidgetView(this, weatherFragment.location.weather);
+        if (weatherFragment.location.name.equals(locationName)) {
+            WidgetWeekService.refreshWidgetView(
+                    this,
+                    weatherFragment.getLocation().name,
+                    weatherFragment.location.weather);
         }
 
         // day week
@@ -361,8 +367,11 @@ public class MainActivity extends GeoActivity
         locationName = sharedPreferences.getString(
                 getString(R.string.key_location),
                 getString(R.string.local));
-        if (weatherFragment.location.location.equals(locationName)) {
-            WidgetDayWeekService.refreshWidgetView(this, weatherFragment.location.weather);
+        if (weatherFragment.location.name.equals(locationName)) {
+            WidgetDayWeekService.refreshWidgetView(
+                    this,
+                    weatherFragment.getLocation().name,
+                    weatherFragment.location.weather);
         }
 
         // clock day
@@ -372,8 +381,11 @@ public class MainActivity extends GeoActivity
         locationName = sharedPreferences.getString(
                 getString(R.string.key_location),
                 getString(R.string.local));
-        if (weatherFragment.location.location.equals(locationName)) {
-            WidgetClockDayService.refreshWidgetView(this, weatherFragment.location.weather);
+        if (weatherFragment.location.name.equals(locationName)) {
+            WidgetClockDayService.refreshWidgetView(
+                    this,
+                    weatherFragment.getLocation().name,
+                    weatherFragment.location.weather);
         }
 
         // clock day center
@@ -383,8 +395,11 @@ public class MainActivity extends GeoActivity
         locationName = sharedPreferences.getString(
                 getString(R.string.key_location),
                 getString(R.string.local));
-        if (weatherFragment.location.location.equals(locationName)) {
-            WidgetClockDayCenterService.refreshWidgetView(this, weatherFragment.location.weather);
+        if (weatherFragment.location.name.equals(locationName)) {
+            WidgetClockDayCenterService.refreshWidgetView(
+                    this,
+                    weatherFragment.getLocation().name,
+                    weatherFragment.location.weather);
         }
 
         // clock day week
@@ -394,8 +409,11 @@ public class MainActivity extends GeoActivity
         locationName = sharedPreferences.getString(
                 getString(R.string.key_location),
                 getString(R.string.local));
-        if (weatherFragment.location.location.equals(locationName)) {
-            WidgetClockDayWeekService.refreshWidgetView(this, weatherFragment.location.weather);
+        if (weatherFragment.location.name.equals(locationName)) {
+            WidgetClockDayWeekService.refreshWidgetView(
+                    this,
+                    weatherFragment.getLocation().name,
+                    weatherFragment.location.weather);
         }
     }
 
@@ -427,7 +445,7 @@ public class MainActivity extends GeoActivity
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     ShareUtils.shareWeather(this, weatherFragment.location.weather);
                 } else {
-                    requestPermission(WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+                    requestWritePermission();
                 }
                 break;
         }
@@ -480,21 +498,24 @@ public class MainActivity extends GeoActivity
         return true;
     }
 
-    // on location changed listener.
+    // on name changed listener.
 
     @Override
     public void selectLocation(String result) {
         Location location = null;
         boolean collected = false;
         for (Location l : locationList) {
-            if (l.location.equals(result)) {
+            if (l.name.equals(result)) {
                 location = l;
                 collected = true;
                 break;
             }
         }
         if (location == null) {
-            location = new Location(result, null);
+            location = new Location(
+                    result,
+                    result.equals(getString(R.string.local)) ?
+                            null : result);
         }
         if (weatherFragment != null) {
             weatherFragment.setLocation(location, collected);
@@ -507,7 +528,7 @@ public class MainActivity extends GeoActivity
         List<Location> newList = new ArrayList<>();
         for (int i = 0; i < nameList.size(); i ++) {
             for (Location l : locationList) {
-                if (l.location.equals(nameList.get(i))) {
+                if (l.name.equals(nameList.get(i))) {
                     newList.add(l);
                     break;
                 }
@@ -519,6 +540,10 @@ public class MainActivity extends GeoActivity
 
         DatabaseHelper.getInstance(this).clearLocation();
         DatabaseHelper.getInstance(this).writeLocation(newList);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutsManager.refreshShortcuts(this, locationList);
+        }
     }
 
     // handler.

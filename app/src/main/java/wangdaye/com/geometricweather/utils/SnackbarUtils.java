@@ -1,9 +1,11 @@
 package wangdaye.com.geometricweather.utils;
 
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import wangdaye.com.geometricweather.GeometricWeather;
+import wangdaye.com.geometricweather.R;
 
 /**
  * Notification utils.
@@ -22,8 +24,12 @@ public class SnackbarUtils {
         Snackbar.make(
                 GeometricWeather.getInstance().getTopActivity().getSnackbarContainer(),
                 txt,
-                Snackbar.LENGTH_SHORT)
+                Snackbar.LENGTH_LONG)
                 .setAction(action, l)
+                .setActionTextColor(
+                        ContextCompat.getColor(
+                                GeometricWeather.getInstance(),
+                                R.color.colorTextAlert))
                 .show();
     }
 }

@@ -36,8 +36,8 @@ public class LocationEntity {
 
     public static LocationEntity build(Location l) {
         LocationEntity entity = new LocationEntity();
-        entity.location = l.location;
-        entity.realLocation = l.realLocation;
+        entity.location = l.name;
+        entity.realLocation = l.realName;
         return entity;
     }
 

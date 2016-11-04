@@ -25,11 +25,10 @@ public class GeometricWeather extends Application {
         activityList.remove(activityList.size() - 1);
     }
 
-    public void clearActivity() {
-        activityList.clear();
-    }
-
     public GeoActivity getTopActivity() {
+        if (activityList.size() == 0) {
+            return null;
+        }
         return activityList.get(activityList.size() - 1);
     }
 

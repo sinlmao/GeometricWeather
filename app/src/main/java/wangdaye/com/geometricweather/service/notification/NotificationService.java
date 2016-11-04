@@ -47,12 +47,12 @@ public class NotificationService extends RecursionService
 
     /** <br> listener. */
 
-    // request location.
+    // request name.
 
     @Override
     public void requestLocationSuccess(String locationName) {
-        weatherUtils.requestWeather(locationName, this);
-        getLocation().realLocation = locationName;
+        getLocation().realName = locationName;
+        weatherUtils.requestWeather(getLocation().name, getLocation().realName, this);
         DatabaseHelper.getInstance(this).insertLocation(getLocation());
     }
 

@@ -25,13 +25,13 @@ public class WeatherUtils {
 
     /** <br> data. */
 
-    public void requestWeather(String location, OnRequestWeatherListener l) {
-        if (Location.isEngLocation(location)) {
+    public void requestWeather(String name, String realName, OnRequestWeatherListener l) {
+        if (Location.isEngLocation(realName)) {
             hefengWeather = HefengWeather.getService()
-                    .requestHefengWeather(location, l);
+                    .requestHefengWeather(name, realName, l);
         } else {
             juheWeather = JuheWeather.getService()
-                    .requestJuheWeather(location, l);
+                    .requestJuheWeather(name, realName, l);
         }
     }
 
@@ -408,8 +408,8 @@ public class WeatherUtils {
     /** <br> listener. */
 
     public interface OnRequestWeatherListener {
-        void requestJuheWeatherSuccess(JuheResult result, String locationName);
-        void requestHefengWeatherSuccess(HefengResult result, String locationName);
-        void requestWeatherFailed(String locationName);
+        void requestJuheWeatherSuccess(JuheResult result, String name);
+        void requestHefengWeatherSuccess(HefengResult result, String name);
+        void requestWeatherFailed(String name);
     }
 }

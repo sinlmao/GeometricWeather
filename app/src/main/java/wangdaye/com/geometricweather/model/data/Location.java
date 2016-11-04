@@ -8,8 +8,8 @@ import wangdaye.com.geometricweather.model.database.entity.LocationEntity;
 
 public class Location {
     // data
-    public String location;
-    public String realLocation;
+    public String name;
+    public String realName;
 
     public Weather weather;
     public History history;
@@ -20,28 +20,27 @@ public class Location {
         this(null, null, null, null);
     }
 
-    public Location(String location, String realLocation) {
-        this(location, realLocation, null, null);
+    public Location(String name, String realName) {
+        this(name, realName, null, null);
     }
 
-    public Location(String location, String realLocation, Weather weather, History history) {
-        this.location = location;
-        this.realLocation = realLocation;
+    public Location(String name, String realName, Weather weather, History history) {
+        this.name = name;
+        this.realName = realName;
         this.weather = weather;
         this.history = history;
     }
 
     public static Location build(LocationEntity entity) {
         Location l = new Location();
-        l.location = entity.location;
-        l.realLocation = entity.realLocation;
+        l.name = entity.location;
+        l.realName = entity.realLocation;
         return l;
     }
 
     /** <br> utils. */
 
     public static boolean isEngLocation(String locationName) {
-        //return locationName.replaceAll(" ", "").matches("[a-zA-Z]+");
         locationName = locationName.replaceAll("，", ",");
         return locationName.getBytes().length == locationName.length();
     }

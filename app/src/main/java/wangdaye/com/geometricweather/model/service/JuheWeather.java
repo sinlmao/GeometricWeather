@@ -19,16 +19,17 @@ public class JuheWeather {
 
     /** <br> data. */
 
-    public JuheWeather requestJuheWeather(final String location, final WeatherUtils.OnRequestWeatherListener l) {
-        Call<JuheResult> getJuheWeather = buildApi().getJuheWeather(location, JuheApi.APP_KEY);
+    public JuheWeather requestJuheWeather(final String name, String realName,
+                                          final WeatherUtils.OnRequestWeatherListener l) {
+        Call<JuheResult> getJuheWeather = buildApi().getJuheWeather(realName, JuheApi.APP_KEY);
         getJuheWeather.enqueue(new Callback<JuheResult>() {
             @Override
             public void onResponse(Call<JuheResult> call, Response<JuheResult> response) {
                 if (l != null) {
                     if (response.isSuccessful() && response.body() != null) {
-                        l.requestJuheWeatherSuccess(response.body(), location);
+                        l.requestJuheWeatherSuccess(response.body(), name);
                     } else {
-                        l.requestWeatherFailed(location);
+                        l.requestWeatherFailed(name);
                     }
                 }
             }
@@ -36,7 +37,7 @@ public class JuheWeather {
             @Override
             public void onFailure(Call<JuheResult> call, Throwable t) {
                 if (l != null) {
-                    l.requestWeatherFailed(location);
+                    l.requestWeatherFailed(name);
                 }
             }
         });

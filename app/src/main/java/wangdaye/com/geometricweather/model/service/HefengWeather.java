@@ -31,16 +31,17 @@ public class HefengWeather {
 
     /** <br> data. */
 
-    public HefengWeather requestHefengWeather(final String location, final WeatherUtils.OnRequestWeatherListener l) {
-        Call<HefengResult> getHefengWeather = buildApi().getHefengWeather(location);
+    public HefengWeather requestHefengWeather(final String name, String realName,
+                                              final WeatherUtils.OnRequestWeatherListener l) {
+        Call<HefengResult> getHefengWeather = buildApi().getHefengWeather(realName);
         getHefengWeather.enqueue(new Callback<HefengResult>() {
             @Override
             public void onResponse(Call<HefengResult> call, Response<HefengResult> response) {
                 if (l != null) {
                     if (response.isSuccessful() && response.body() != null) {
-                        l.requestHefengWeatherSuccess(response.body(), location);
+                        l.requestHefengWeatherSuccess(response.body(), name);
                     } else {
-                        l.requestWeatherFailed(location);
+                        l.requestWeatherFailed(name);
                     }
                 }
             }
@@ -48,7 +49,7 @@ public class HefengWeather {
             @Override
             public void onFailure(Call<HefengResult> call, Throwable t) {
                 if (l != null) {
-                    l.requestWeatherFailed(location);
+                    l.requestWeatherFailed(name);
                 }
             }
         });

@@ -62,10 +62,10 @@ public abstract class RecursionService extends Service {
 
     public void requestData(WeatherUtils.OnRequestWeatherListener weatherListener,
                              LocationUtils.OnRequestLocationListener locationListener) {
-        if(location.location.equals(getString(R.string.local))) {
-            locationUtils.requestLocation(locationListener);
+        if(location.name.equals(getString(R.string.local))) {
+            locationUtils.requestLocation(this, locationListener);
         } else {
-            weatherUtils.requestWeather(location.location, weatherListener);
+            weatherUtils.requestWeather(location.name, location.name, weatherListener);
         }
     }
 

@@ -48,10 +48,10 @@ public class TodayForecastService extends Service
 
         this.location = DatabaseHelper.getInstance(this).readLocation().get(0);
 
-        if (location.location.equals(getString(R.string.local))) {
-            locationUtils.requestLocation(this);
+        if (location.name.equals(getString(R.string.local))) {
+            locationUtils.requestLocation(this, this);
         } else {
-            weatherUtils.requestWeather(location.location, this);
+            weatherUtils.requestWeather(location.name, location.name, this);
         }
         return START_NOT_STICKY;
     }
@@ -65,12 +65,12 @@ public class TodayForecastService extends Service
 
     /** <br> interface. */
 
-    // request location.
+    // request name.
 
     @Override
     public void requestLocationSuccess(String locationName) {
-        weatherUtils.requestWeather(locationName, this);
-        location.realLocation = locationName;
+        location.realName = locationName;
+        weatherUtils.requestWeather(location.name, location.realName, this);
         DatabaseHelper.getInstance(this).insertLocation(location);
     }
 

@@ -1,6 +1,8 @@
 package wangdaye.com.geometricweather.utils;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -25,8 +27,14 @@ public class LocationUtils {
 
     /** <br> data. */
 
-    public void requestLocation(OnRequestLocationListener l) {
-        BaiduLocation.requestLocation(client, new SimpleBDLocationListener(l));
+    public void requestLocation(Context c, OnRequestLocationListener l) {
+        NetworkInfo info = ((ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE))
+                .getActiveNetworkInfo();
+        if (info != null && info.isAvailable()) {
+            BaiduLocation.requestLocation(client, new SimpleBDLocationListener(l));
+        } else {
+            l.requestLocationFailed();
+        }
     }
 
     public void cancel() {

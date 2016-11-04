@@ -5,7 +5,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
 /**
- * Baidu location.
+ * Baidu name.
  * */
 
 public class BaiduLocation {

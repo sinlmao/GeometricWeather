@@ -3,7 +3,7 @@
     <string name="app_name">天气</string>
     <string name="geometric_weather">Geometric Weather</string>
     <string name="package_name">wangdaye.com.geometricweather</string>
-    <string name="version_code">v4.6.1</string>
+    <string name="version_code">v4.6.6</string>
 
     <!-- keyword. -->
     <string name="local">本地</string>
@@ -72,8 +72,10 @@
     <string name="about_glide">An image loading and caching library for Android focused on smooth scrolling.</string>
 
     <!-- feedback. -->
-    <string name="feedback_request_location_permission_failed">获取定位权限失败</string>
-    <string name="feedback_request_write_permission_failed">获取输出文件权限失败</string>
+    <string name="feedback_request_permission">授权</string>
+    <string name="feedback_request_location_permission_success">获取位置权限成功</string>
+    <string name="feedback_request_location_permission_failed">获取位置权限失败</string>
+    <string name="feedback_request_write_permission_failed">获取文件权限失败</string>
 
     <string name="feedback__location_failed">定位失败，请检查权限和网络连接</string>
     <string name="feedback_get_weather_failed">获取天气数据失败</string>
@@ -174,7 +176,7 @@
     <string name="sp_widget_clock_day_center_setting">widget_clock_day_center_setting</string>
     <string name="sp_widget_clock_day_week_setting">widget_clock_day_week_setting</string>
     <string name="key_enable">enable</string>
-    <string name="key_location">location</string>
+    <string name="key_location">name</string>
     <string name="key_show_card">showCard</string>
     <string name="key_hide_refresh_time">show_refresh_time</string>
     <string name="key_black_text">black_text</string>

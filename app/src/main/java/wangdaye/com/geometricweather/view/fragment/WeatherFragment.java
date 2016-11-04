@@ -3,9 +3,13 @@ package wangdaye.com.geometricweather.view.fragment;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Fragment;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
@@ -78,6 +82,8 @@ public class WeatherFragment extends Fragment
 
     private WeatherUtils weatherUtils;
     private LocationUtils locationUtils;
+
+    private final int LOCATION_PERMISSIONS_REQUEST_CODE = 1;
 
     // animation
     private AnimatorSet viewShowAnimator;
@@ -268,16 +274,43 @@ public class WeatherFragment extends Fragment
         this.collected = collected;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
     public void requestLocation() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            locationUtils.requestLocation(this);
+        locationUtils.requestLocation(getActivity(), this);
+    }
+
+    /** <br> permission. */
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                getActivity(),
+                android.Manifest.permission.INSTALL_LOCATION_PROVIDER) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                    new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_PERMISSIONS_REQUEST_CODE);
         } else {
-            ((MainActivity) getActivity()).requestPermission(MainActivity.LOCATION_PERMISSIONS_REQUEST_CODE);
+            SnackbarUtils.showSnackbar(getString(R.string.feedback_request_location_permission_success));
+            locationUtils.requestLocation(getActivity(), this);
         }
     }
 
-    public LocationUtils getLocationUtils() {
-        return locationUtils;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permission, @NonNull int[] grantResult) {
+        super.onRequestPermissionsResult(requestCode, permission, grantResult);
+        switch (requestCode) {
+            case LOCATION_PERMISSIONS_REQUEST_CODE:
+                if (grantResult[0] == PackageManager.PERMISSION_GRANTED) {
+                    SnackbarUtils.showSnackbar(getString(R.string.feedback_request_location_permission_success));
+                    locationUtils.requestLocation(getActivity(), this);
+                } else {
+                    SnackbarUtils.showSnackbar(getString(R.string.feedback_request_location_permission_failed));
+                }
+                break;
+        }
     }
 
     /** <br> interface. */
@@ -312,6 +345,14 @@ public class WeatherFragment extends Fragment
         }
     }
 
+    private View.OnClickListener snackbarAction = new View.OnClickListener() {
+        @TargetApi(Build.VERSION_CODES.M)
+        @Override
+        public void onClick(View view) {
+            requestLocationPermission();
+        }
+    };
+
     // on refresh listener.
 
     @Override
@@ -319,10 +360,10 @@ public class WeatherFragment extends Fragment
         locationUtils.cancel();
         weatherUtils.cancel();
 
-        if (location.location.equals(getString(R.string.local))) {
+        if (location.name.equals(getString(R.string.local))) {
             requestLocation();
         } else {
-            weatherUtils.requestWeather(location.location, this);
+            weatherUtils.requestWeather(location.name, location.name, this);
         }
     }
 
@@ -349,7 +390,7 @@ public class WeatherFragment extends Fragment
 
     @Override
     public void swipeTakeEffect(int direction) {
-        ((MainActivity) getActivity()).switchCity(location.location, direction);
+        ((MainActivity) getActivity()).switchCity(location.name, direction);
     }
 
     // on click week listener.
@@ -361,13 +402,13 @@ public class WeatherFragment extends Fragment
         weatherDialog.show(getFragmentManager(), null);
     }
 
-    // on request location listener.
+    // on request name listener.
 
     @Override
     public void requestLocationSuccess(String locationName) {
-        if (location.location.equals(getString(R.string.local))) {
-            weatherUtils.requestWeather(locationName, this);
-            location.realLocation = locationName;
+        if (location.name.equals(getString(R.string.local))) {
+            location.realName = locationName;
+            weatherUtils.requestWeather(location.name, location.realName, this);
             ((MainActivity) getActivity()).refreshLocation(location);
             DatabaseHelper.getInstance(getActivity()).insertLocation(location);
         }
@@ -375,14 +416,21 @@ public class WeatherFragment extends Fragment
 
     @Override
     public void requestLocationFailed() {
-        if (location.location.equals(getString(R.string.local))) {
-            if (location.weather == null && !TextUtils.isEmpty(location.realLocation)) {
+        if (location.name.equals(getString(R.string.local))) {
+            if (location.weather == null && !TextUtils.isEmpty(location.realName)) {
                 location.weather = DatabaseHelper.getInstance(getActivity()).searchWeather(location);
                 location.history = DatabaseHelper.getInstance(getActivity()).searchYesterdayHistory(location.weather);
                 ((MainActivity) getActivity()).refreshLocation(location);
                 buildUI();
             }
-            LocationUtils.simpleLocationFailedFeedback(getActivity());
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                LocationUtils.simpleLocationFailedFeedback(getActivity());
+            } else {
+                SnackbarUtils.showSnackbar(
+                        getString(R.string.feedback__location_failed),
+                        getString(R.string.feedback_request_permission),
+                        snackbarAction);
+            }
             setRefreshing(false);
         }
     }
@@ -402,12 +450,19 @@ public class WeatherFragment extends Fragment
     }
 
     private void requestWeatherSuccess(Weather weather, String locationName) {
-        if ((location.location.equals(getString(R.string.local)) && location.realLocation.equals(locationName))
-                || location.location.equals(locationName)) {
+        if ((location.name.equals(getString(R.string.local)) && location.realName.equals(locationName))
+                || location.name.equals(locationName)) {
             if (weather == null) {
                 SnackbarUtils.showSnackbar(getString(R.string.feedback_get_weather_failed));
+
+                if (location.weather == null) {
+                    location.weather = DatabaseHelper.getInstance(getActivity()).searchWeather(location);
+                    if (location.weather != null) {
+                        location.history = DatabaseHelper.getInstance(getActivity())
+                                .searchYesterdayHistory(location.weather);
+                    }
+                }
                 buildUI();
-                setRefreshing(false);
             } else if (location.weather == null
                     || !location.weather.base.refreshTime.equals(weather.base.refreshTime)) {
                 location.weather = weather;
@@ -421,15 +476,14 @@ public class WeatherFragment extends Fragment
                 DatabaseHelper.getInstance(getActivity()).insertHistory(weather);
 
                 buildUI();
-                setRefreshing(false);
             }
+            setRefreshing(false);
         }
     }
 
     @Override
-    public void requestWeatherFailed(String locationName) {
-        if ((location.location.equals(getString(R.string.local)) && location.realLocation.equals(locationName))
-                || location.location.equals(locationName)) {
+    public void requestWeatherFailed(String name) {
+        if (location.name.equals(name)) {
             if (location.weather == null) {
                 location.weather = DatabaseHelper.getInstance(getActivity()).searchWeather(location);
 
@@ -442,8 +496,8 @@ public class WeatherFragment extends Fragment
                 SnackbarUtils.showSnackbar(getString(R.string.feedback_get_weather_failed));
 
                 buildUI();
-                setRefreshing(false);
             }
+            setRefreshing(false);
         }
     }
 }

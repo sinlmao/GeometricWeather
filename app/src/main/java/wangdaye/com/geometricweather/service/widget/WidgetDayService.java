@@ -65,7 +65,7 @@ public class WidgetDayService extends RecursionService
 
     /** <br> widget. */
 
-    public static void refreshWidgetView(Context context, Weather weather) {
+    public static void refreshWidgetView(Context context, String locationName, Weather weather) {
         if (weather == null) {
             return;
         }
@@ -117,7 +117,8 @@ public class WidgetDayService extends RecursionService
         // set refresh time visibility.
         views.setViewVisibility(R.id.widget_day_refreshTime, hideRefreshTime ? View.GONE : View.VISIBLE);
         // set clock intent.
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent("com.wangdaye.geometricweather.Main")
+                .putExtra(MainActivity.KEY_CITY, locationName);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.widget_day_button, pendingIntent);
 
@@ -130,12 +131,12 @@ public class WidgetDayService extends RecursionService
 
     /** <br> interface. */
 
-    // request location.
+    // request name.
 
     @Override
     public void requestLocationSuccess(String locationName) {
-        weatherUtils.requestWeather(locationName, this);
-        getLocation().realLocation = locationName;
+        getLocation().realName = locationName;
+        weatherUtils.requestWeather(getLocation().name, getLocation().realName, this);
         DatabaseHelper.getInstance(this).insertLocation(getLocation());
     }
 
@@ -144,6 +145,7 @@ public class WidgetDayService extends RecursionService
         LocationUtils.simpleLocationFailedFeedback(this);
         refreshWidgetView(
                 this,
+                getLocation().name,
                 DatabaseHelper.getInstance(this).searchWeather(getLocation()));
         this.stopSelf(getStartId());
     }
@@ -154,7 +156,7 @@ public class WidgetDayService extends RecursionService
     public void requestJuheWeatherSuccess(JuheResult result, String locationName) {
         Weather weather = Weather.build(this, result);
 
-        refreshWidgetView(this, weather);
+        refreshWidgetView(this, getLocation().name, weather);
         getLocation().weather = weather;
         DatabaseHelper.getInstance(this).insertWeather(getLocation());
         DatabaseHelper.getInstance(this).insertHistory(weather);
@@ -165,7 +167,7 @@ public class WidgetDayService extends RecursionService
     public void requestHefengWeatherSuccess(HefengResult result, String locationName) {
         Weather weather = Weather.build(this, result);
 
-        refreshWidgetView(this, weather);
+        refreshWidgetView(this, getLocation().name, weather);
         getLocation().weather = weather;
         DatabaseHelper.getInstance(this).insertWeather(getLocation());
         DatabaseHelper.getInstance(this).insertHistory(weather);
@@ -177,6 +179,7 @@ public class WidgetDayService extends RecursionService
         WidgetAndNotificationUtils.refreshWidgetFailed(this);
         refreshWidgetView(
                 this,
+                getLocation().name,
                 DatabaseHelper.getInstance(this).searchWeather(getLocation()));
         this.stopSelf(getStartId());
     }

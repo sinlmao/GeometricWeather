@@ -3,6 +3,7 @@ package wangdaye.com.geometricweather.model.database.helper;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -60,8 +61,8 @@ public class DatabaseHelper {
                     .getLocationEntityDao()
                     .insert(LocationEntity.build(l));
         } else {
-            entity.location = l.location;
-            entity.realLocation = l.realLocation;
+            entity.location = l.name;
+            entity.realLocation = l.realName;
             updateLocation(entity);
         }
     }
@@ -99,7 +100,7 @@ public class DatabaseHelper {
 
     // update
 
-    public void updateLocation(LocationEntity entity) {
+    private void updateLocation(LocationEntity entity) {
         new DaoMaster(getDatabase())
                 .newSession()
                 .getLocationEntityDao()
@@ -117,13 +118,13 @@ public class DatabaseHelper {
         }
     }
 
-    public LocationEntity searchLocationEntity(Location l) {
+    private LocationEntity searchLocationEntity(Location l) {
         LocationEntityDao dao = new DaoMaster(getDatabase())
                 .newSession()
                 .getLocationEntityDao();
 
         QueryBuilder<LocationEntity> builder = dao.queryBuilder();
-        builder.where(LocationEntityDao.Properties.Location.eq(l.location));
+        builder.where(LocationEntityDao.Properties.Location.eq(l.name));
 
         List<LocationEntity> entityList = builder.list();
         if (entityList == null || entityList.size() <= 0) {
@@ -157,6 +158,10 @@ public class DatabaseHelper {
     // insert.
 
     public void insertWeather(Location l) {
+        if (l.weather == null) {
+            return;
+        }
+
         WeatherEntity entity = searchWeatherEntity(l);
         WeatherEntity newEntity = WeatherEntity.build(l.weather);
         if (entity != null) {
@@ -169,7 +174,10 @@ public class DatabaseHelper {
                 .insert(newEntity);
     }
 
-    public void deleteWeather(WeatherEntity entity) {
+    private void deleteWeather(WeatherEntity entity) {
+        if (entity == null) {
+            return;
+        }
         new DaoMaster(getDatabase())
                 .newSession()
                 .getWeatherEntityDao()
@@ -177,6 +185,10 @@ public class DatabaseHelper {
     }
 
     public Weather searchWeather(Location l) {
+        if (l == null) {
+            return null;
+        }
+
         WeatherEntity entity = searchWeatherEntity(l);
         if (entity == null) {
             return null;
@@ -185,15 +197,25 @@ public class DatabaseHelper {
         }
     }
 
-    public WeatherEntity searchWeatherEntity(Location l) {
+    private WeatherEntity searchWeatherEntity(Location l) {
+        if (l == null) {
+            return null;
+        } else if (TextUtils.isEmpty(l.name)) {
+            return null;
+        } else if (l.name.equals(LOCAL) && TextUtils.isEmpty(l.realName)) {
+            return null;
+        }
+
         WeatherEntityDao dao = new DaoMaster(getDatabase())
                 .newSession()
                 .getWeatherEntityDao();
 
         QueryBuilder<WeatherEntity> builder = dao.queryBuilder();
-        builder.where(
-                WeatherEntityDao.Properties.Location.eq(
-                        l.location.equals(LOCAL) ? l.realLocation : l.location));
+        if (l.name.equals(LOCAL)) {
+            builder.where(WeatherEntityDao.Properties.Location.eq(l.realName));
+        } else {
+            builder.where(WeatherEntityDao.Properties.Location.eq(l.name));
+        }
 
         List<WeatherEntity> entityList = builder.list();
         if (entityList == null || entityList.size() <= 0) {
@@ -208,6 +230,10 @@ public class DatabaseHelper {
     // insert.
 
     public void insertHistory(Weather w) {
+        if (w == null) {
+            return;
+        }
+
         History yesterday = searchYesterdayHistory(w);
         clearLocationHistory(w);
 
@@ -222,7 +248,11 @@ public class DatabaseHelper {
 
     // delete.
 
-    public void clearLocationHistory(Weather w) {
+    private void clearLocationHistory(Weather w) {
+        if (w == null) {
+            return;
+        }
+
         List<HistoryEntity> entityList = searchHistoryEntity(w);
         HistoryEntityDao dao = new DaoMaster(getDatabase())
                 .newSession()
@@ -234,6 +264,10 @@ public class DatabaseHelper {
 
     @SuppressLint("SimpleDateFormat")
     public History searchYesterdayHistory(Weather w) {
+        if (w == null) {
+            return null;
+        }
+
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date date = format.parse(w.base.date);
@@ -262,7 +296,11 @@ public class DatabaseHelper {
         }
     }
 
-    public List<HistoryEntity> searchHistoryEntity(Weather w) {
+    private List<HistoryEntity> searchHistoryEntity(Weather w) {
+        if (w == null) {
+            return new ArrayList<>();
+        }
+
         return new DaoMaster(getDatabase())
                 .newSession()
                 .getHistoryEntityDao()
